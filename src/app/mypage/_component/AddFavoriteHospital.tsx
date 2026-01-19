@@ -4,6 +4,9 @@ import React, { useRef, useState } from "react";
 import SearchHospital, { Hospital } from "@shared/component/SearchHospital/SearchHospital";
 import { useGetFavoriteHospital, usePatchFavoriteHospital } from "@api/shared/hook";
 
+import LazyImage from "@common/component/LazyImage";
+import PlusHopitalSrc from "@asset/image/plusHospital.png";
+
 interface AddFavoriteHospitalPropTypes {
   nickname: string;
 }
@@ -40,21 +43,14 @@ const AddFavoriteHospital = ({ nickname }: AddFavoriteHospitalPropTypes) => {
   return (
     <div className={styles.favoriteHospitalContainer} onClick={handleClickContainer}>
       {data ? (
-        <div className={styles.redirectBox}>
-          <div className={styles.leftContentBox}>
-            <span className={styles.leftTopText}>즐겨찾는 병원</span>
-            <span className={styles.leftMiddleText}>{data.name}</span>
-            <span className={styles.leftBottomText}>
-              {data.address}
-              {/* {`· 리뷰 ${selectedHospital?.reviewCount}`} */}
-            </span>
-          </div>
-          {/* <Image src={data.image ?? nicknameCoco} alt="병원이미지" className={styles.rightContentBox} /> */}
+        <div className={styles.addBox}>
+          <LazyImage src={PlusHopitalSrc} alt="plusHosptial" width="2rem" height="2rem" />
+          자주 방문하는 병원
         </div>
       ) : (
         <div className={styles.addBox}>
-          즐겨찾는 동물병원 추가하기
           <IcPlus width={20} height={20} />
+          자주 방문하는 병원
         </div>
       )}
       {/* 병원 검색 바텀시트 */}
