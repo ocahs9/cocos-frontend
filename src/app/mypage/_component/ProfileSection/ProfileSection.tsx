@@ -92,6 +92,7 @@ const LoggedProfile = ({
     </div>
 
     <div className={styles.loginProfileContainer}>
+      {/*todo: API 나오면 데이터 연결하고 해당 주석 풀기*/}
       {/* <div className={styles.userProfileImageWrapperHeader}>
         <IcClock width={14} height={14} />
         {`호흡기 시술 1개월이 지났어요.`}
