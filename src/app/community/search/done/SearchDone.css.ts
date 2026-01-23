@@ -1,8 +1,9 @@
-import {style} from "@vanilla-extract/css";
-import {color, font} from "@style/styles.css.ts";
+import { style } from "@vanilla-extract/css";
+import { color, font } from "@style/styles.css.ts";
 
 export const styles = {
-  container: style({}),
+  container: style({
+  }),
   icon: style({
     width: "2.4rem",
   }),
@@ -19,6 +20,7 @@ export const styles = {
     padding: "1.6rem 2rem 0 2rem",
     display: "flex",
     flexDirection: "column",
+    alignItems: "flex-start",
   }),
   searchWrap: style({
     marginTop: "1.6rem",
@@ -29,6 +31,7 @@ export const styles = {
   filterwrap: style({}),
 
   noSearchData: style({
+    width: "100%",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
