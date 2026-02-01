@@ -23,8 +23,8 @@ const nextConfig: NextConfig = {
     unoptimized: false,
     domains: [
       //prod
-      "cocos-app-data.s3.ap-northeast-2.amazonaws.com",
-      "cocos-member-data.s3.ap-northeast-2.amazonaws.com",
+      "cocos-member.s3.ap-northeast-2.amazonaws.com",
+      "cocos-app.s3.ap-northeast-2.amazonaws.com",
 
       //dev
       "cocos-app-data-dev.s3.ap-northeast-2.amazonaws.com",

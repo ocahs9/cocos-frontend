@@ -1,5 +1,5 @@
 import axios from "axios";
-const PROD_API_URL = "https://www.cocos.r-e.kr/api/prod";
+const PROD_API_URL = "https://www.cocos.p-e.kr/api/prod";
 const DEV_API_URL = "https://www.cocos-dev.r-e.kr/api/dev";
 export const API_BASE_URL = process.env.NEXT_PUBLIC_DEPLOY_ENV === "prod" ? PROD_API_URL : DEV_API_URL;
 
