@@ -4,6 +4,7 @@ import {
   getHospitalList,
   getMemeberFavoriteHospitals,
   getMemeberHospitalReviews,
+  getRecentReview,
   patchMemberFavoriteHospitals,
   RequestBody,
   ResponseType,
@@ -135,5 +136,14 @@ export const useDeleteHospitalReview = () => {
         queryKey: ["memberHospitalReview"],
       });
     },
+  });
+};
+
+export const useGetRecentReview = (nickname?: string) => {
+  return useQuery({
+    queryKey: ["recentReview", nickname],
+    queryFn: () => getRecentReview(nickname),
+    staleTime: 1000 * 60 * 3,
+    enabled: !!nickname,
   });
 };

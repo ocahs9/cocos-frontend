@@ -19,6 +19,7 @@ export const API_PATH = {
   MEMBERS_WITHDRAW: "members/deactivate",
   MEMBERS_REVIEWS_AGREE: "members/reviews/agree",
   MEMBER_LOCATION: "members/location",
+  MEMBER_REVIEW_RECENT: "members/reviews/recent",
 
   LOCATION: "locations",
 
