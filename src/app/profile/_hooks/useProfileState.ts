@@ -19,6 +19,7 @@ export interface PetInfo {
   breed?: string;
   petAge?: string | number;
   diseases?: Disease[];
+  petName?: string;
 }
 
 export const useProfileState = () => {

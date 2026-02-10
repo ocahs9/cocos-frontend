@@ -1,19 +1,20 @@
 import { IcPlus } from "@asset/svg";
-import * as styles from "../_style/mypage.css";
+import * as styles from "../../app/mypage/_style/mypage.css";
 import React, { useEffect, useState } from "react";
 import LazyImage from "@common/component/LazyImage";
 import Lung from "@asset/image/lung.png";
 import Liver from "@asset/image/liver.png";
 import { useGetPetInfo } from "@api/domain/mypage/hook";
-import { useDiseaseSymptomFilterStore } from "./DiseaseSymptomBottomSheet/_store/categoryFilter";
-import DiseasesSymptomBottomSheet from "./DiseaseSymptomBottomSheet/DiseaseSymptomBottomSheet";
+import { useDiseaseSymptomFilterStore } from "../../app/mypage/_component/DiseaseSymptomBottomSheet/_store/categoryFilter";
+import DiseasesSymptomBottomSheet from "../../app/mypage/_component/DiseaseSymptomBottomSheet/DiseaseSymptomBottomSheet";
 import { useGetBodies, useGetDisease, useGetSymptoms } from "@api/domain/mypage/edit-pet/hook";
 
 interface InterestedDiseasesPropTypes {
   nickname: string;
+  isMyPage?: boolean;
 }
 
-const InterestedDiseases = ({ nickname }: InterestedDiseasesPropTypes) => {
+const InterestedDiseases = ({ nickname, isMyPage = true }: InterestedDiseasesPropTypes) => {
   // 표시용(프로필 주인 기준)
   const { data } = useGetPetInfo(nickname);
   // 패치/수정 기준(내 반려동물 기준)
@@ -52,6 +53,9 @@ const InterestedDiseases = ({ nickname }: InterestedDiseasesPropTypes) => {
   }, [symptoms, disease, setCategoryData]);
 
   const handleClickContainer: React.MouseEventHandler<HTMLDivElement> = () => {
+    //todo: 기능 명세가 제대로 나오면 연결
+    if (!isMyPage) return;
+
     if (!petAllInfo?.petId) return;
     setCategory("disease"); //항상 질병으로 먼저 열리도록
 
@@ -109,13 +113,21 @@ const InterestedDiseases = ({ nickname }: InterestedDiseasesPropTypes) => {
           </div>
         ) : (
           <div className={styles.addBox}>
-            <IcPlus width={20} height={20} />
-            관심 질병
+            {isMyPage ? (
+              <>
+                <IcPlus width={20} height={20} />
+                관심 질병
+              </>
+            ) : (
+              <span className={styles.grayText}>
+                관심있는 질병이 없어요
+              </span>
+            )}
           </div>
         )}
       </div>
 
-      {petAllInfo?.petId ? <DiseasesSymptomBottomSheet petId={petAllInfo.petId} /> : null}
+      {isMyPage && petAllInfo?.petId ? <DiseasesSymptomBottomSheet petId={petAllInfo.petId} /> : null}
     </>
   );
 };

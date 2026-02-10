@@ -190,3 +190,85 @@ export const whereText = style([
     maxWidth: "26.8rem",
   },
 ]);
+
+export const userProfileContainer = style([
+  a.flexColumn,
+  a.alignFlexStart,
+  {
+    gap: "1.6rem",
+  },
+]);
+
+export const loginProfileContainer = style([
+  a.cardBase,
+  {
+    width: "33.5rem",
+  },
+]);
+
+export const userProfileImageWrapperHeader = style([
+  font.label01,
+  {
+    borderTopLeftRadius: "16px",
+    borderTopRightRadius: "16px",
+
+    color: semanticColor.text.inverse,
+
+    display: "flex",
+    padding: "10px 16px",
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "stretch",
+    gap: "0.6rem",
+
+    width: "100%",
+    height: "36px",
+    background: semanticColor.primary.heavy,
+  },
+]);
+
+export const userProfileImageWrapper = style([
+  a.flexRow,
+  a.alignCenter,
+  a.justifyCenter,
+  {
+    gap: "1.2rem",
+  },
+]);
+
+export const userProfileContentBox = style({
+  padding: "1.6rem",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: "1.6rem",
+  width: "100%",
+});
+
+export const addInfoBox = style({
+  display: "flex",
+  width: "100%",
+  height: "4.8rem",
+  gap: "1.6rem",
+});
+
+export const userProfileTextWrapper = style([
+  a.flexRow,
+  a.alignCenter,
+  a.justifyCenter,
+  {
+    gap: "0.4rem",
+  },
+]);
+
+export const userProfileTextAssistive = style([
+  font.label01,
+  a.textCenter,
+  {
+    color: semanticColor.text.assistive,
+  },
+]);
+
+export const petSubInfo = style({
+  color: semanticColor.text.assistive,
+});

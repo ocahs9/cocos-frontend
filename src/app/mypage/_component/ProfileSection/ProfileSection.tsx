@@ -3,7 +3,7 @@ import * as styles from "../../_style/mypage.css";
 import Divider from "@common/component/Divider/Divider";
 import { Button } from "@common/component/Button";
 import { IcChevronRight, IcClock, IcPlus } from "@asset/svg";
-import AddFavoriteHospital from "../AddFavoriteHospital";
+import AddFavoriteHospital from "@common/component/AddFavoriteHospital";
 import { Disease, MemberInfo } from "../../_hooks/useMypageState";
 import { PetInfo, useProfileSectionState } from "@app/mypage/_hooks/useProfileSectionState";
 import { useMypageMemberInfo } from "@app/mypage/_store/mypageStore";
@@ -11,7 +11,9 @@ import { useRouter } from "next/navigation";
 import { PATH } from "@route/path";
 import { useAuth } from "@providers/AuthProvider";
 import LazyImage from "@common/component/LazyImage";
-import InterestedDiseases from "../InterestedDiseases";
+import InterestedDiseases from "@common/component/InterestedDiseases";
+import { useGetRecentReview } from "@api/shared/hook";
+import { secondsToMonths } from "@common/util";
 
 interface ProfileSectionProps {
   onNavigateToEditPet: () => void;
@@ -73,47 +75,53 @@ const LoggedProfile = ({
   petInfo?: PetInfo;
   onNavigateToEditPet: () => void;
   onNavigateToRegisterPet: () => void;
-}) => (
-  <div className={styles.userProfileContainer}>
-    <div className={styles.userProfileImageWrapper}>
-      {member.profileImage && (
-        <LazyImage
-          className={styles.profileImage}
-          alt="프로필 이미지"
-          src={member.profileImage}
-          width="3.2rem"
-          height="3.2rem"
-        />
-      )}
-      <span className={styles.userProfileTextWrapper}>
-        <span className={styles.userProfileText}>{member.nickname}</span>
-        <span className={styles.userProfileTextAssistive}>님의 반려동물</span>
-      </span>
-    </div>
+}) => {
+  const { data } = useGetRecentReview(member.nickname);
 
-    <div className={styles.loginProfileContainer}>
-      {/*todo: API 나오면 데이터 연결하고 해당 주석 풀기*/}
-      {/* <div className={styles.userProfileImageWrapperHeader}>
-        <IcClock width={14} height={14} />
-        {`호흡기 시술 1개월이 지났어요.`}
-      </div> */}
-      <div className={styles.userProfileContentBox}>
-        <PetProfile
-          petInfo={petInfo}
-          isRegister={isRegister}
-          onNavigateToEditPet={onNavigateToEditPet}
-          onNavigateToRegisterPet={onNavigateToRegisterPet}
-        />
-        {petInfo && (
-          <div className={styles.addInfoBox}>
-            {member.nickname && <InterestedDiseases nickname={member.nickname} />}
-            {member.nickname && <AddFavoriteHospital nickname={member.nickname} />}
+  return (
+    <div className={styles.userProfileContainer}>
+      <div className={styles.userProfileImageWrapper}>
+        {member.profileImage && (
+          <LazyImage
+            className={styles.profileImage}
+            alt="프로필 이미지"
+            src={member.profileImage}
+            width="3.2rem"
+            height="3.2rem"
+          />
+        )}
+        <span className={styles.userProfileTextWrapper}>
+          <span className={styles.userProfileText}>{member.nickname}</span>
+          <span className={styles.userProfileTextAssistive}>님의 반려동물</span>
+        </span>
+      </div>
+
+      <div className={styles.loginProfileContainer}>
+        {data?.data && (
+          <div className={styles.userProfileImageWrapperHeader}>
+            <IcClock width={14} height={14} />
+            {`${data.data.diseaseBody} 시술 ${data.data.timeSinceVisit?.value}${data.data.timeSinceVisit?.unit === "DAY" ? "일" : "개월"}이 지났어요.`}
           </div>
         )}
+
+        <div className={styles.userProfileContentBox}>
+          <PetProfile
+            petInfo={petInfo}
+            isRegister={isRegister}
+            onNavigateToEditPet={onNavigateToEditPet}
+            onNavigateToRegisterPet={onNavigateToRegisterPet}
+          />
+          {petInfo && (
+            <div className={styles.addInfoBox}>
+              {member.nickname && <InterestedDiseases nickname={member.nickname} />}
+              {member.nickname && <AddFavoriteHospital nickname={member.nickname} />}
+            </div>
+          )}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const PetProfile = ({
   petInfo,

@@ -383,3 +383,13 @@ export const rightContentBox = style([
     height: "4.8rem",
   },
 ]);
+
+export const grayText = style({
+  color: "#BEBEBE",
+  fontFamily: "Pretendard",
+  fontSize: "12px",
+  fontStyle: "normal",
+  fontWeight: "500",
+  lineHeight: "130%",
+  letterSpacing: "-0.24px",
+});
