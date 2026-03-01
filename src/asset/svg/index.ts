@@ -23,6 +23,7 @@ export { default as IcChevronLeft } from "./IcChevronLeft";
 export { default as IcChevronRight } from "./IcChevronRight";
 export { default as IcChevronRight2 } from "./IcChevronRight2";
 export { default as IcClear } from "./IcClear";
+export { default as IcClock } from "./IcClock";
 export { default as IcCocos } from "./IcCocos";
 export { default as IcCocosM } from "./IcCocosM";
 export { default as IcCommunity } from "./IcCommunity";

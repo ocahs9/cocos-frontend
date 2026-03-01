@@ -3,7 +3,6 @@ import { del, patch, post, get } from "@api/index";
 import { components, paths } from "@type/schema";
 
 export type RequestBody = paths["/api/dev/hospitals"]["post"]["requestBody"]["content"]["application/json"];
-export type ResponseType = paths["/api/dev/hospitals"]["post"]["responses"]["200"]["content"]["*/*"];
 export type HospitalListType = components["schemas"]["HospitalResponse"][];
 
 export const getHospitalList = async (body: RequestBody) => {
@@ -46,4 +45,10 @@ export const deleteReview = async (reviewId: string | number) => {
   type ResponseType = paths["/api/dev/hospitals/reviews/{reviewId}"]["delete"]["responses"]["200"]["content"]["*/*"];
   const response = await del<ResponseType>(`${API_PATH.MEMBERS_HOSPITAL_REVIEWS}/${reviewId}`);
   return response;
+};
+
+export const getRecentReview = async (nickname?: string) => {
+  type ResponseType = paths["/api/dev/members/reviews/recent"]["get"]["responses"]["200"]["content"]["*/*"];
+  const response = await get<ResponseType>(`${API_PATH.MEMBER_REVIEW_RECENT}?nickname=${nickname}`);
+  return response.data;
 };
