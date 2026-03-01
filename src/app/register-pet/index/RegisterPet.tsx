@@ -3,11 +3,13 @@ import { useState } from "react";
 import PetHealthDualSelector from "./component/petHealth/petHealthDualSelector/PetHealthDualSelector";
 
 import { useMyPetPost } from "@api/domain/register-pet/pets/hook";
+import type { myPetPostType } from "@api/domain/register-pet/pets";
 import dynamic from "next/dynamic";
 import PetName from "./component/petName/PetName.tsx";
 import PetType from "./component/petType/PetType.tsx";
 import PetGender from "./component/petGender/PetGender.tsx";
-import PetAge from "./component/petAge/PetAge.tsx";
+import PetBirth from "./component/petBirth/PetBirth.tsx";
+import PetWeight from "./component/weight/PetWeight.tsx";
 import PetId from "./component/petId/PetId.tsx";
 import PetHealth from "./component/petHealth/PetHealth.tsx";
 import ProgressBar from "./common/ProgressBar/ProgressBar.tsx";
@@ -18,7 +20,8 @@ export interface PetData {
   breedId: number | null;
   name: string;
   gender: "F" | "M" | null;
-  age: number | null;
+  birth: string | null;
+  weight: number | null;
   diseaseIds: number[] | null;
   symptomIds: number[];
 }
@@ -39,7 +42,8 @@ const RegisterPet = () => {
     breedId: null,
     name: "",
     gender: null,
-    age: null,
+    birth: null,
+    weight: null,
     diseaseIds: [],
     symptomIds: [],
   });
@@ -57,15 +61,23 @@ const RegisterPet = () => {
   };
 
   const handleSubmit = () => {
-    // 데이터 전송 로직
-    myPet(petData, {
+    const apiData: myPetPostType = {
+      breedId: petData.breedId,
+      name: petData.name,
+      gender: petData.gender,
+      birthDate: petData.birth,
+      diseaseIds: petData.diseaseIds,
+      symptomIds: petData.symptomIds,
+    };
+    myPet(apiData, {
       onSuccess: () => {
         // 데이터 초기화 및 초기 단계로 이동
         setPetData({
           breedId: null,
           name: "",
           gender: null,
-          age: null,
+          birth: null,
+          weight: null, // 몸무게 추가
           diseaseIds: [],
           symptomIds: [],
         });
@@ -86,8 +98,10 @@ const RegisterPet = () => {
       case 3:
         return <PetId setStep={setStep} updatePetData={updatePetData} petData={petData} />;
       case 4:
-        return <PetAge setStep={setStep} updatePetData={updatePetData} />;
+        return <PetBirth setStep={setStep} updatePetData={updatePetData} />;
       case 5:
+        return <PetWeight setStep={setStep} updatePetData={updatePetData} />;
+      case 6:
         return (
           <PetHealthDualSelector
             setStep={setStep}
@@ -96,7 +110,7 @@ const RegisterPet = () => {
             setCurrentStep={setCurrentStep}
           />
         );
-      case 6:
+      case 7:
         return (
           <PetHealth
             setStep={setStep}
@@ -116,7 +130,7 @@ const RegisterPet = () => {
 
   return (
     <>
-      <ProgressBar max={7} current={step} />
+      <ProgressBar max={8} current={step} />
       {getComponent()}
     </>
   );

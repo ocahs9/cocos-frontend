@@ -48,12 +48,18 @@ export const pleaseLoginText = style([
   },
 ]);
 
-export const loginProfile = style([
+export const userProfileContainer = style([
+  a.flexColumn,
+  a.alignFlexStart,
+  {
+    gap: "1.6rem",
+  },
+]);
+
+export const loginProfileContainer = style([
   a.cardBase,
-  a.gap12,
   {
     width: "33.5rem",
-    padding: "1.6rem",
   },
 ]);
 
@@ -69,12 +75,75 @@ export const userProfile = style([
 
 export const profileImage = style([a.profileImageBase]);
 
+export const userProfileImageWrapper = style([
+  a.flexRow,
+  a.alignCenter,
+  a.justifyCenter,
+  {
+    gap: "1.2rem",
+  },
+]);
+
+export const userProfileImageWrapperHeader = style([
+  font.label01,
+  {
+    borderTopLeftRadius: "16px",
+    borderTopRightRadius: "16px",
+
+    color: semanticColor.text.inverse,
+
+    display: "flex",
+    padding: "10px 16px",
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "stretch",
+    gap: "0.6rem",
+
+    width: "100%",
+    height: "36px",
+    background: semanticColor.primary.heavy,
+  },
+]);
+
+export const userProfileContentBox = style({
+  padding: "1.6rem",
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: "1.6rem",
+  width: "100%",
+});
+
+export const addInfoBox = style({
+  display: "flex",
+  width: "100%",
+  height: "4.8rem",
+  gap: "1.6rem",
+});
+
+export const userProfileTextWrapper = style([
+  a.flexRow,
+  a.alignCenter,
+  a.justifyCenter,
+  {
+    gap: "0.4rem",
+  },
+]);
+
 export const userProfileText = style([
-  font.heading02,
+  font.body01,
   a.textCenter,
   {
     alignSelf: "stretch",
     color: semanticColor.text.normal,
+  },
+]);
+
+export const userProfileTextAssistive = style([
+  font.label01,
+  a.textCenter,
+  {
+    color: semanticColor.text.assistive,
   },
 ]);
 
@@ -83,8 +152,9 @@ export const animalProfileWrapper = style([
   a.flexRow,
   a.alignCenter,
   a.justifyCenter,
-  a.gap12,
+  a.gap8,
   {
+    position: "relative",
     alignSelf: "stretch",
   },
 ]);
@@ -102,7 +172,6 @@ export const animalProfileTextWrapper = style([
   {
     alignItems: "flex-start",
     gap: "0.4rem",
-    flex: "1 0 0",
   },
 ]);
 
@@ -184,8 +253,8 @@ export const settingWrapper = recipe({
   },
 });
 
-export const textDivider = style({
-  color: color.gray.gray600,
+export const petSubInfo = style({
+  color: semanticColor.text.assistive,
 });
 
 export const spanNoWrap = style([
@@ -277,15 +346,16 @@ export const favoriteHospitalContainer = style([
 ]);
 
 export const addBox = style([
-  font.body01,
-  a.textAssistive,
+  font.label01,
   a.flexRow,
   a.justifyCenter,
   a.alignCenter,
-  a.gap6,
+  a.gap4,
   a.fullWidth,
   {
-    padding: "0.6rem 1.4rem",
+    color: color.gray.gray800,
+    whiteSpace: "nowrap",
+    padding: "1.2rem 0",
   },
 ]);
 
@@ -313,3 +383,13 @@ export const rightContentBox = style([
     height: "4.8rem",
   },
 ]);
+
+export const grayText = style({
+  color: "#BEBEBE",
+  fontFamily: "Pretendard",
+  fontSize: "12px",
+  fontStyle: "normal",
+  fontWeight: "500",
+  lineHeight: "130%",
+  letterSpacing: "-0.24px",
+});
