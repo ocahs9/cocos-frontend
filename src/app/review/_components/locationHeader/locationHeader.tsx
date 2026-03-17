@@ -6,7 +6,9 @@ import { useGetMemberLocation } from "@api/domain/review/location/hook";
 import { motion } from "framer-motion";
 import { updateMemberLocation } from "@api/domain/review/location";
 import { LocationType } from "@api/domain/review/location/types";
+import { DEFAULT_LOCATION } from "@app/review/_constant/locationConfig";
 
+const STORAGE_KEY = "selectedLocation";
 interface Location {
   id: number;
   name: string;
@@ -15,7 +17,6 @@ interface Location {
   districtName?: string;
   townName?: string;
 }
-
 interface LocationHeaderProps {
   onLocationChange: (location: Location) => void;
   onBottomSheetOpenChange: Dispatch<SetStateAction<boolean>>;
@@ -47,10 +48,10 @@ export default function LocationHeader({ onLocationChange, onBottomSheetOpenChan
     onBottomSheetOpenChange(true);
   };
 
-  const handleBottomSheetClose = () => {
-    setIsBottomSheetOpen(false);
-    onBottomSheetOpenChange(false);
-  };
+      setSelectedLocation(updatedLocation);
+      onLocationChange(updatedLocation);
+      handleBottomSheetToggle(false);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedLocation));
 
   const handleLocationSelect = async (location: Location) => {
     setSelectedLocation(location);
@@ -74,7 +75,7 @@ export default function LocationHeader({ onLocationChange, onBottomSheetOpenChan
 
   return (
     <div className={styles.location}>
-      <div className={styles.locationButton} onClick={handleBottomSheetOpen}>
+      <div className={styles.locationButton} onClick={() => handleBottomSheetToggle(true)}>
         <div className={styles.locationContent}>
           <IcTarget width={20} />
           <span className={styles.locationText}>{displayLocationName}</span>
@@ -89,8 +90,9 @@ export default function LocationHeader({ onLocationChange, onBottomSheetOpenChan
       </div>
       <LocationBottomSheet
         isOpen={isBottomSheetOpen}
-        onClose={handleBottomSheetClose}
+        onClose={() => handleBottomSheetToggle(false)}
         onLocationSelect={handleLocationSelect}
+        currentLocation={selectedLocation || DEFAULT_LOCATION.DISTRICT}
       />
     </div>
   );

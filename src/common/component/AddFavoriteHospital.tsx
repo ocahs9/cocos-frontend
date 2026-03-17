@@ -1,22 +1,33 @@
 import { IcPlus } from "@asset/svg";
-import * as styles from "../_style/mypage.css";
+import * as styles from "../../app/mypage/_style/mypage.css";
 import React, { useRef, useState } from "react";
 import SearchHospital, { Hospital } from "@shared/component/SearchHospital/SearchHospital";
 import { useGetFavoriteHospital, usePatchFavoriteHospital } from "@api/shared/hook";
 
+import LazyImage from "@common/component/LazyImage";
+import PlusHopitalSrc from "@asset/image/plusHospital.png";
+import { PATH } from "@route/path";
+import { useRouter } from "next/navigation";
+
 interface AddFavoriteHospitalPropTypes {
   nickname: string;
+  isMyPage?: boolean;
 }
 
-const AddFavoriteHospital = ({ nickname }: AddFavoriteHospitalPropTypes) => {
+const AddFavoriteHospital = ({ nickname, isMyPage = true }: AddFavoriteHospitalPropTypes) => {
   const [isHospitalSearchBottomSheetOpen, setIsHospitalSearchBottomSheetOpen] = useState(false);
   const [selectedHospital, setSelectedHospital] = useState<Hospital | null>(null);
   const prevSelectedHospital = useRef<Hospital | null>(null);
+  const router = useRouter();
 
   const { mutate } = usePatchFavoriteHospital();
   const { data } = useGetFavoriteHospital(nickname);
 
   const handleClickContainer: React.MouseEventHandler<HTMLDivElement> = () => {
+    if (!isMyPage) {
+      data?.id && router.push(`${PATH.HOSPITAL.ROOT}/${data.id}`);
+      return;
+    }
     setIsHospitalSearchBottomSheetOpen(true);
   };
 
@@ -40,21 +51,20 @@ const AddFavoriteHospital = ({ nickname }: AddFavoriteHospitalPropTypes) => {
   return (
     <div className={styles.favoriteHospitalContainer} onClick={handleClickContainer}>
       {data ? (
-        <div className={styles.redirectBox}>
-          <div className={styles.leftContentBox}>
-            <span className={styles.leftTopText}>즐겨찾는 병원</span>
-            <span className={styles.leftMiddleText}>{data.name}</span>
-            <span className={styles.leftBottomText}>
-              {data.address}
-              {/* {`· 리뷰 ${selectedHospital?.reviewCount}`} */}
-            </span>
-          </div>
-          {/* <Image src={data.image ?? nicknameCoco} alt="병원이미지" className={styles.rightContentBox} /> */}
+        <div className={styles.addBox}>
+          <LazyImage src={PlusHopitalSrc} alt="plusHosptial" width="2rem" height="2rem" />
+          자주 방문하는 병원
         </div>
       ) : (
         <div className={styles.addBox}>
-          즐겨찾는 동물병원 추가하기
-          <IcPlus width={20} height={20} />
+          {isMyPage ? (
+            <>
+              <IcPlus width={20} height={20} />
+              자주 방문하는 병원
+            </>
+          ) : (
+            <span className={styles.grayText}>자주 방문한 병원이 없어요</span>
+          )}
         </div>
       )}
       {/* 병원 검색 바텀시트 */}

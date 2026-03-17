@@ -20,9 +20,13 @@ export const ONBOARDING_GUIDE = {
     title: "반려동물의 종류를 알려주세요",
     docs: "반려동물은 어떤 종인가요?",
   },
-  petAge: {
-    title: "반려동물의 나이를 입력해주세요",
-    docs: "태어난 지 몇 년이나 되었는지 숫자로 입력해주세요",
+  petBirth: {
+    title: "반려동물의 생일을 입력해주세요",
+    docs: "오늘 기준의 만 나이를 자동으로 적용해 드려요",
+  },
+  petWeight: {
+    title: "반려동물의 몸무게를 입력해주세요",
+    docs: "모르겠다면 ‘다음’을 눌러주세요 (예 : 말티즈 약 4kg)",
   },
   isPetDisease: {
     title: "반려동물 건강 관련 고민이 있나요?",

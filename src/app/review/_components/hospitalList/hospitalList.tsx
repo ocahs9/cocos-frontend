@@ -5,6 +5,7 @@ import * as styles from "./hospitalList.css";
 import Link from "next/link";
 import { HospitalListResponse, Hospital } from "@api/domain/hospitals";
 import { PATH } from "@route/path";
+import { DEFAULT_LOCATION } from "@app/review/_constant/locationConfig";
 import LazyImage from "@common/component/LazyImage";
 
 interface Location {
@@ -27,8 +28,8 @@ export default function HospitalList({ title, highlightText, selectedLocation }:
   const { ref, inView } = useInView();
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteHospitalList({
-    locationType: selectedLocation?.type || "CITY",
-    locationId: selectedLocation?.id,
+    locationType: selectedLocation?.type || DEFAULT_LOCATION.DISTRICT.type,
+    locationId: selectedLocation?.id || DEFAULT_LOCATION.DISTRICT.id,
     size: 10,
     sortBy: "REVIEW",
     image: "",

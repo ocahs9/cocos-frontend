@@ -17,12 +17,14 @@ const nextConfig: NextConfig = {
   },
   // 정적 내보내기 대신 정적 대체 사용
   staticPageGenerationTimeout: 120, // 타임아웃을 2분으로 설정
+  // Production에서 source map 생성 (Sentry를 위해 필요)
+  productionBrowserSourceMaps: true,
   images: {
     unoptimized: false,
     domains: [
       //prod
-      "cocos-app-data.s3.ap-northeast-2.amazonaws.com",
-      "cocos-member-data.s3.ap-northeast-2.amazonaws.com",
+      "cocos-member.s3.ap-northeast-2.amazonaws.com",
+      "cocos-app.s3.ap-northeast-2.amazonaws.com",
 
       //dev
       "cocos-app-data-dev.s3.ap-northeast-2.amazonaws.com",
