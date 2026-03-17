@@ -1,6 +1,6 @@
 import * as styles from "./locationHeader.css";
 import { IcChevronDown, IcTarget } from "@asset/svg";
-import { useState, Dispatch, SetStateAction, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 import LocationBottomSheet from "../locationBottomSheet/locationBottomSheet";
 import { useGetMemberLocation } from "@api/domain/review/location/hook";
 import { motion } from "framer-motion";
@@ -13,6 +13,9 @@ interface Location {
   id: number;
   name: string;
   type: LocationType;
+  cityName?: string;
+  districtName?: string;
+  townName?: string;
 }
 interface LocationHeaderProps {
   onLocationChange: (location: Location) => void;
@@ -24,65 +27,51 @@ export default function LocationHeader({ onLocationChange, onBottomSheetOpenChan
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null);
   const { data: memberLocation } = useGetMemberLocation();
 
-  const handleBottomSheetToggle = useCallback(
-    (isOpen: boolean) => {
-      setIsBottomSheetOpen(isOpen);
-      onBottomSheetOpenChange(isOpen);
-    },
-    [onBottomSheetOpenChange],
-  );
+  // 컴포넌트 마운트 시 로컬스토리지에서 선택한 위치 불러오기
+  useEffect(() => {
+    const savedLocation = localStorage.getItem("selectedLocation");
+    if (savedLocation) {
+      try {
+        const parsedLocation = JSON.parse(savedLocation) as Location;
+        setSelectedLocation(parsedLocation);
+        // 부모 컴포넌트에도 알림
+        onLocationChange(parsedLocation);
+      } catch (error) {
+        console.error("Failed to parse saved location:", error);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const handleLocationSelect = useCallback(
-    (location: {
-      id: number;
-      name: string;
-      type: LocationType;
-    }) => {
-      const updatedLocation = {
-        ...location,
-        cityName: "",
-        districtName: location.name,
-        townName: "",
-      } as Location;
+  const handleBottomSheetOpen = () => {
+    setIsBottomSheetOpen(true);
+    onBottomSheetOpenChange(true);
+  };
 
       setSelectedLocation(updatedLocation);
       onLocationChange(updatedLocation);
       handleBottomSheetToggle(false);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updatedLocation));
 
-      updateMemberLocation({
-        locationId: location.id,
-        locationType: location.type,
-      });
-    },
-    [onLocationChange, handleBottomSheetToggle],
-  );
+  const handleLocationSelect = async (location: Location) => {
+    setSelectedLocation(location);
+    onLocationChange(location);
+    handleBottomSheetClose();
 
-  useEffect(() => {
-    const savedLocation = localStorage.getItem(STORAGE_KEY);
-    if (!savedLocation) {
-      if (memberLocation?.locationId) {
-        const newLocation = {
-          id: memberLocation.locationId,
-          name: memberLocation.locationName,
-          type: "DISTRICT",
-        } as Location;
-        setSelectedLocation(newLocation);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(newLocation));
-        onLocationChange(newLocation);
-      }
-      return;
-    }
+    const locationData = {
+      id: location.id,
+      name: location.name,
+      type: location.type,
+      cityName: location.cityName || "",
+      districtName: location.districtName || "",
+      townName: location.townName || "",
+    };
+    localStorage.setItem("selectedLocation", JSON.stringify(locationData));
 
-    const parsedLocation = JSON.parse(savedLocation);
-    setSelectedLocation(parsedLocation);
-    onLocationChange(parsedLocation);
-  }, [memberLocation]);
+    await updateMemberLocation(location.id);
+  };
 
-  const displayLocationName = useMemo(
-    () => selectedLocation?.name || memberLocation?.locationName || "위치 선택",
-    [selectedLocation?.name, memberLocation?.locationName],
-  );
+  const displayLocationName = selectedLocation?.name || memberLocation?.locationName || "위치 선택";
 
   return (
     <div className={styles.location}>
