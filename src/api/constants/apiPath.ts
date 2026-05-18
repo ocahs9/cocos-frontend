@@ -41,4 +41,5 @@ export const API_PATH = {
 
   MEMBERS_HOSPITALS: "members/hospitals",
   MEMBERS_HOSPITAL_REVIEWS: "hospitals/reviews",
+  NOTIFICATIONS: "notifications",
 };
