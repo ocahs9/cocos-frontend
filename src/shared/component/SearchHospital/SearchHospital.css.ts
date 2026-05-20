@@ -90,11 +90,11 @@ export const titleStyle = style([
 export const cardContainer = style({
   position: "absolute",
   top: "12rem",
-  bottom: "12.6rem",
+  bottom: "7.4rem",
 
   width: "100%",
   height: "auto",
-  maxHeight: "calc(100% - 24.6rem)",
+  maxHeight: "calc(100% - 19.4rem)",
   overflowY: "auto",
   paddingBottom: "1rem",
 
@@ -118,8 +118,8 @@ export const buttonContainer = style({
   gap: "0.8rem",
 
   width: "100%",
-  height: "12.6rem",
-  padding: "0 2rem 3.2rem 2rem",
+  height: "7.4rem",
+  padding: "1.2rem 2rem 3.2rem 2rem",
 
   backgroundColor: color.gray.gray000,
 });
