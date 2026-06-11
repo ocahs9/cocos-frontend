@@ -272,7 +272,9 @@ const WriteContent = () => {
     <>
       <WorningToastWrap errorMessage={errorMessage} setErrorMessage={setErrorMessage} />
       <div>
-        <HeaderNav leftIcon={<IcDeleteBlack width={24} />} onLeftClick={onBackClick} centerContent={"글쓰기"} />
+        <div className={headerContainer}>
+          <HeaderNav leftIcon={<IcDeleteBlack width={24} />} onLeftClick={onBackClick} centerContent={"글쓰기"} />
+        </div>
         <div className={writeWrap}>
           {/* 제목 영역 */}
           <WriteInputSection title={"게시판 선택"}>

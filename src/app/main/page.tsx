@@ -17,11 +17,13 @@ import { PATH } from "@route/path.ts";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import HotHospital from "@app/main/_section/hotHospital/HotHospital.tsx";
+import { useAuth } from "@providers/AuthProvider";
 
 export default function Page() {
   const router = useRouter();
-  const { data: myAlarmData } = useInfiniteNotifications("MY");
-  const { data: magazineAlarmData } = useInfiniteNotifications("MAGAZINE");
+  const { isAuthenticated } = useAuth();
+  const { data: myAlarmData } = useInfiniteNotifications("MY", isAuthenticated);
+  const { data: magazineAlarmData } = useInfiniteNotifications("MAGAZINE", isAuthenticated);
   const hasUnreadAlarm = [...(myAlarmData?.pages ?? []), ...(magazineAlarmData?.pages ?? [])].some((page) =>
     page.data.notifications.some((notification) => !notification.isRead),
   );
@@ -42,14 +44,16 @@ export default function Page() {
 
   return (
     <div className={styles.mainContainer}>
-      <button className={styles.alarmButton} onClick={handleAlarmClick} aria-label="알림">
-        <IcNotice width={24} height={24} />
-        {hasUnreadAlarm && (
-          <span className={styles.alarmUnreadBadge}>
-            <IcRedBtn width={6} height={6} />
-          </span>
-        )}
-      </button>
+      {isAuthenticated && (
+        <button className={styles.alarmButton} onClick={handleAlarmClick} aria-label="알림">
+          <IcNotice width={24} height={24} />
+          {hasUnreadAlarm && (
+            <span className={styles.alarmUnreadBadge}>
+              <IcRedBtn width={6} height={6} />
+            </span>
+          )}
+        </button>
+      )}
       <MainHeader />
       <div className={styles.headerContainer}>
         <TextField
