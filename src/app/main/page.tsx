@@ -3,7 +3,7 @@
 import Symptom from "@app/main/_section/symptom/Symptom.tsx";
 import * as styles from "./Main.css.ts";
 import { TextField } from "@common/component/TextField";
-import { IcSearch } from "@asset/svg";
+import { IcNotice, IcRedBtn, IcSearch } from "@asset/svg";
 import MainFooter from "@app/main/_section/mainFooter/MainFooter.tsx";
 import Divider from "@common/component/Divider/Divider.tsx";
 import HotPost from "@app/main/_section/hotPost/HotPost.tsx";
@@ -11,14 +11,22 @@ import MainHeader from "@app/main/_section/mainHeader/mainHeader.tsx";
 import Nav from "@common/component/Nav/Nav.tsx";
 import Spacing from "@common/component/Spacing/Spacing.tsx";
 import { NAV_CONTENT } from "@common/component/Nav/constant.ts";
+import { useInfiniteNotifications } from "@api/domain/alarm/hook";
 
 import { PATH } from "@route/path.ts";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import HotHospital from "@app/main/_section/hotHospital/HotHospital.tsx";
+import { useAuth } from "@providers/AuthProvider";
 
 export default function Page() {
   const router = useRouter();
+  const { isAuthenticated } = useAuth();
+  const { data: myAlarmData } = useInfiniteNotifications("MY", isAuthenticated);
+  const { data: magazineAlarmData } = useInfiniteNotifications("MAGAZINE", isAuthenticated);
+  const hasUnreadAlarm = [...(myAlarmData?.pages ?? []), ...(magazineAlarmData?.pages ?? [])].some((page) =>
+    page.data.notifications.some((notification) => !notification.isRead),
+  );
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -30,8 +38,22 @@ export default function Page() {
     router.push(PATH.COMMUNITY.SEARCH);
   };
 
+  const handleAlarmClick = () => {
+    router.push(PATH.ALARM);
+  };
+
   return (
     <div className={styles.mainContainer}>
+      {isAuthenticated && (
+        <button className={styles.alarmButton} onClick={handleAlarmClick} aria-label="알림">
+          <IcNotice width={24} height={24} />
+          {hasUnreadAlarm && (
+            <span className={styles.alarmUnreadBadge}>
+              <IcRedBtn width={6} height={6} />
+            </span>
+          )}
+        </button>
+      )}
       <MainHeader />
       <div className={styles.headerContainer}>
         <TextField

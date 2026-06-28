@@ -1,9 +1,10 @@
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import * as styles from "@app/community/detail/SymptomDetail.css.ts";
 import { IcRightArrow } from "@asset/svg";
 import { LoadingFallback } from "@app/community/detail/_section/index.tsx";
 import { usePostHospitalReviews } from "@api/domain/community/detail/hook.ts";
+import { useUpdateMemberLocation } from "@api/domain/review/location/hook.ts";
 import NoData from "@shared/component/NoData/NoData.tsx";
 import HospitalReview from "@shared/component/HospitalReview/HospitalReview.tsx";
 import { postHospitalReviewsResponseData } from "@api/domain/community/detail";
@@ -26,6 +27,18 @@ interface ReviewFilterState {
 const DEFAULT_LOCATION_ID = 1;
 const PAGE_SIZE = 20;
 
+const DEFAULT_LOCATION: LocationFilterType = { id: 1, name: "경기 전체", type: "CITY" };
+
+const isLocationFilterType = (value: unknown): value is LocationFilterType => {
+  if (typeof value !== "object" || value === null) return false;
+  const v = value as Record<string, unknown>;
+  return (
+    typeof v.id === "number" &&
+    typeof v.name === "string" &&
+    (v.type === "CITY" || v.type === "DISTRICT")
+  );
+};
+
 const ReviewDetailContent = () => {
   const searchParams = useSearchParams();
   const bodyId = searchParams?.get("id");
@@ -40,15 +53,24 @@ const ReviewDetailContent = () => {
 
   // State
   const { isOpen: isModalOpen, handleOpenChange, handleOpen: handleOpenModal } = useOpenToggle();
-  const [location, setLocation] = useState<LocationFilterType>({
-    id: 1,
-    name: "경기 전체",
-    type: "CITY",
+  const [location, setLocation] = useState<LocationFilterType>(() => {
+    if (typeof window === "undefined") return DEFAULT_LOCATION;
+    try {
+      const saved = localStorage.getItem("selectedLocation");
+      if (saved) {
+        const parsed: unknown = JSON.parse(saved);
+        if (isLocationFilterType(parsed)) return parsed;
+      }
+    } catch (error) {
+      console.error("selectedLocation 파싱 실패:", error);
+    }
+    return DEFAULT_LOCATION;
   });
   const [reviewList, setReviewList] = useState<postHospitalReviewsResponseData[]>([]);
 
   // API
   const { mutate: postHospitalReviews, isPending } = usePostHospitalReviews();
+  const { mutate: updateLocation } = useUpdateMemberLocation();
 
   const handleProfileClick = (nickname: string | undefined) => {
     router.push(`/profile?nickname=${nickname}`);
@@ -90,8 +112,14 @@ const ReviewDetailContent = () => {
     postReviews(location, summaryOptionId);
   };
 
+  useEffect(() => {
+    postReviews(location);
+  }, []);
+
   const handleLocationSelect = (newLocation: LocationFilterType) => {
     setLocation(newLocation);
+    localStorage.setItem("selectedLocation", JSON.stringify(newLocation));
+    updateLocation({ locationId: newLocation.id, locationType: newLocation.type });
     postReviews(newLocation, filterId ? Number(filterId) : undefined);
   };
 

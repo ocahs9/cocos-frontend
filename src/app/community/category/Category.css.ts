@@ -1,12 +1,31 @@
-import {style} from "@vanilla-extract/css";
-import {color, font} from "@style/styles.css";
+import { style } from "@vanilla-extract/css";
+import { color, font } from "@style/styles.css";
+
+export const headerContainer = style({
+  position: "fixed",
+  top: 0,
+  left: 0,
+  right: 0,
+  backgroundColor: "#fff",
+  zIndex: 20,
+});
 
 export const categoryContainer = style({
   width: "100%",
 });
 
 export const postsContainer = style({
+  marginTop: "6.4rem",
   padding: "1.6rem 2rem 2rem 2rem",
+  display: "flex",
+  flexDirection: "column",
+  gap: "1.6rem",
+  alignItems: "flex-start",
+});
+
+export const postsContent = style({
+  width: "100%",
+
   display: "flex",
   flexDirection: "column",
   gap: "1.6rem",

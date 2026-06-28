@@ -34,12 +34,16 @@ export const COMMENT_QUERY_KEY = {
  * @param postId
  */
 
-export const usePostGet = (postId: number) => {
+export const usePostGet = (
+  postId: number,
+  initialPost?: Awaited<ReturnType<typeof getPost>> | null,
+) => {
   return useQuery({
     queryKey: POST_QUERY_KEY.POST_QUERY_KEY(postId),
-    queryFn: () => {
-      return getPost(postId);
-    },
+    queryFn: () => getPost(postId),
+    initialData: initialPost ?? undefined,
+    enabled: initialPost !== null,
+    staleTime: initialPost ? 300_000 : 0,
   });
 };
 
@@ -74,12 +78,14 @@ export const useDeleteLike = (postId: string) => {
  * @param postId
  */
 
-export const useCommentsGet = (postId: number) => {
+export const useCommentsGet = (
+  postId: number,
+  initialPost?: Awaited<ReturnType<typeof getPost>> | null,
+) => {
   return useQuery({
     queryKey: COMMENT_QUERY_KEY.COMMENTS_QUERY_KEY(postId),
-    queryFn: () => {
-      return getComments(postId);
-    },
+    queryFn: () => getComments(postId),
+    enabled: initialPost !== null,
   });
 };
 

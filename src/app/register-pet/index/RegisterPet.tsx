@@ -1,9 +1,9 @@
 import { useState } from "react";
-
-import PetHealthDualSelector from "./component/petHealth/petHealthDualSelector/PetHealthDualSelector";
+import { useRouter } from "next/navigation";
 
 import { useMyPetPost } from "@api/domain/register-pet/pets/hook";
 import type { myPetPostType } from "@api/domain/register-pet/pets";
+import { PATH } from "@route/path";
 import dynamic from "next/dynamic";
 import PetName from "./component/petName/PetName.tsx";
 import PetType from "./component/petType/PetType.tsx";
@@ -25,15 +25,17 @@ export interface PetData {
   diseaseIds: number[] | null;
   symptomIds: number[];
 }
+
+export type PetHealthIds = Pick<PetData, "diseaseIds" | "symptomIds">;
+
 const RegisterPet = () => {
+  const router = useRouter();
+
   // 등록 전체 조절
   const [step, setStep] = useState(0);
 
-  // 질병 단계 스킵 했는지 확인하는 상태
-  const [isSkipDisease, setIsSkipDisease] = useState<boolean | null>(null);
-
-  // 질병, 증상 세부 단계 조절
-  const [currentStep, setCurrentStep] = useState<number | null>(null);
+  // 질병, 증상 세부 단계 조절 (1: 대분류, 2: 질병 소분류, 3: 증상 소분류)
+  const [currentStep, setCurrentStep] = useState(1);
 
   // api
   const { mutate: myPet, isPending } = useMyPetPost();
@@ -55,19 +57,24 @@ const RegisterPet = () => {
   ) => {
     setPetData((prev) => {
       const updatedData = { ...prev, [field]: value };
-      if (callback) callback(updatedData);
+      // 콜백은 업데이터 안에서 호출하면 안 됨!!(렌더, 커밋 중 Router 등 다른 컴포넌트 업데이트 유발).
+      if (callback) {
+        queueMicrotask(() => callback(updatedData));
+      }
       return updatedData;
     });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (healthIds?: PetHealthIds) => {
+    const diseaseIds = healthIds?.diseaseIds ?? petData.diseaseIds;
+    const symptomIds = healthIds?.symptomIds ?? petData.symptomIds;
     const apiData: myPetPostType = {
       breedId: petData.breedId,
       name: petData.name,
       gender: petData.gender,
       birthDate: petData.birth,
-      diseaseIds: petData.diseaseIds,
-      symptomIds: petData.symptomIds,
+      diseaseIds,
+      symptomIds,
     };
     myPet(apiData, {
       onSuccess: () => {
@@ -81,6 +88,7 @@ const RegisterPet = () => {
           diseaseIds: [],
           symptomIds: [],
         });
+        router.push(PATH.REGISTER_PET.COMPLETE);
       },
     });
   };
@@ -103,26 +111,14 @@ const RegisterPet = () => {
         return <PetWeight setStep={setStep} updatePetData={updatePetData} />;
       case 6:
         return (
-          <PetHealthDualSelector
-            setStep={setStep}
-            isSkipDisease={isSkipDisease}
-            setIsSkipDisease={setIsSkipDisease}
-            setCurrentStep={setCurrentStep}
-          />
-        );
-      case 7:
-        return (
           <PetHealth
             setStep={setStep}
-            updatePetData={updatePetData}
-            isSkipDisease={isSkipDisease}
             handleSubmit={handleSubmit}
             currentStep={currentStep}
             setCurrentStep={setCurrentStep}
             isPending={isPending}
           />
         );
-
       default:
         return;
     }
@@ -130,7 +126,7 @@ const RegisterPet = () => {
 
   return (
     <>
-      <ProgressBar max={8} current={step} />
+      <ProgressBar max={7} current={step} />
       {getComponent()}
     </>
   );

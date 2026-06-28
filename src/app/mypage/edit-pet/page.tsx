@@ -18,6 +18,8 @@ import { useAnimalFilterStore } from "./_store/animalFilter.ts";
 import { getAnimalChipNamesById } from "./_utils/getAnimalChipNamesById.ts";
 import AgeBottomSheet from "./_component/AgeBottomSheet/AgeBottomSheet";
 import { CategoryData } from "./_store/categoryFilter.ts";
+import { formatBirthDate, validateBirthDate } from "@app/register-pet/index/utils/validateBirthDate";
+import { getAgeFromBirthDate } from "@app/register-pet/index/utils/getAgeFromBirthDate";
 import {
   useGetAnimal,
   useGetBodies,
@@ -50,8 +52,9 @@ const Page = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState("");
   const [validationMessages, setValidationMessages] = useState<string[]>([]);
-  const [isValid, setIsVaild] = useState(false);
-  const [petAge, setPetAge] = useState("");
+  const [isValid, setIsValid] = useState(false);
+  const [petBirth, setPetBirth] = useState("");
+  const [birthError, setBirthError] = useState<string | null>(null);
   const [bodyDiseaseIds, setBodyDiseaseIds] = useState<number[]>([]); //api 요청으로 받아온 body id들을 저장해두었다가, 다시 요청에 사용
   const [bodySymptomsIds, setBodySymptomsIds] = useState<number[]>([]); //api 요청으로 받아온 body id들을 저장해두었다가, 다시 요청에 사용
 
@@ -61,21 +64,10 @@ const Page = () => {
   // member 정보를 직접 가져와서 스토어에 설정
   const { data: memberData } = useGetMemberInfo();
 
+  const { setOpen, setCategory, setCategoryData, selectedChips, categoryData, setSelectedChips } =
+    useCategoryFilterStore();
   const {
-    isOpen,
-    setOpen,
-    category,
-    setCategory,
-    setCategoryData,
-    selectedChips,
-    toggleChips,
-    categoryData,
-    setSelectedChips,
-  } = useCategoryFilterStore();
-  const {
-    isOpen: animalOpen,
     setOpen: setAnimalOpen,
-    category: animalCategory,
     setCategory: setAnimalCategory,
     setCategoryData: setAnimalCategoryData,
     selectedChips: animalChips,
@@ -83,8 +75,20 @@ const Page = () => {
     categoryData: animalCategoryData,
   } = useAnimalFilterStore();
   const [ageBottomSheetOpen, setAgeBottomSheetOpen] = useState(false);
-  const updatePetAge = (e: ChangeEvent<HTMLInputElement>) => {
-    setPetAge(e.target.value.replace(/[^0-9]/g, "")); // 숫자만 필터링 후 상태 업데이트
+
+  const updatePetBirth = ({ target: { value } }: ChangeEvent<HTMLInputElement>) => {
+    const numericValue = value.replace(/[^0-9]/g, "");
+    if (numericValue === "0") return;
+    const formatted = formatBirthDate(value);
+    setPetBirth(formatted);
+    if (formatted.length === 0) {
+      setBirthError(null);
+    } else if (formatted.length === 10) {
+      const result = validateBirthDate(formatted);
+      setBirthError(result.valid ? null : result.error);
+    } else {
+      setBirthError(null);
+    }
   };
 
   const { data: animal } = useGetAnimal();
@@ -170,11 +174,9 @@ const Page = () => {
     if (breed?.breeds) {
       setAnimalCategoryData("breeds", breed.breeds);
     }
-    if (petInfo?.petAge) {
-      //todo : 추후 요청 보낼 때는 다시 number로 변환 필요
-      setPetAge(String(petInfo.petAge));
-    }
-  }, [breed, petInfo, setAnimalCategoryData]);
+  }, [breed, setAnimalCategoryData]);
+
+  const displayAge = petInfo?.petAge ?? (petBirth ? getAgeFromBirthDate(petBirth.replace(/\//g, "-")) : null);
 
   if (!animal) return;
 
@@ -183,9 +185,9 @@ const Page = () => {
     setName(name);
 
     //유효성 검사, 유효성 상태 설정
-    const inVaildateMessages = validateNickname(name);
-    setValidationMessages(inVaildateMessages);
-    setIsVaild(inVaildateMessages.length === 0);
+    const messages = validateNickname(name);
+    setValidationMessages(messages);
+    setIsValid(messages.length === 0);
   };
 
   const handleEditClick = () => {
@@ -247,11 +249,13 @@ const Page = () => {
 
   return (
     <div>
-      <HeaderNav
-        leftIcon={<IcChevronLeft width={24} height={24} />}
-        centerContent={"반려동물 정보 수정"}
-        onLeftClick={() => router.push(PATH.MYPAGE.ROOT)}
-      />
+      <div className={styles.headerContainer}>
+        <HeaderNav
+          leftIcon={<IcChevronLeft width={24} height={24} />}
+          centerContent={"반려동물 정보 수정"}
+          onLeftClick={() => router.push(PATH.MYPAGE.ROOT)}
+        />
+      </div>
       <section className={styles.petEditWrapper}>
         <article className={styles.profileInfo}>
           <img className={styles.profileImage} alt="프로필 이미지" src={petInfo.petImage} />
@@ -307,7 +311,7 @@ const Page = () => {
                     (animalChips.gender
                       ? getAnimalChipNamesById(animalChips.gender as "M" | "F", "gender", animalCategoryData)
                       : "_")}
-                  {item.tab === "age" && (`${petAge}살` || "_")}
+                  {item.tab === "age" && (displayAge !== null ? `${displayAge}살` : "_")}
                   <IcChevronRight width={20} height={20} />
                 </button>
               </div>
@@ -334,9 +338,14 @@ const Page = () => {
         <AgeBottomSheet
           isOpen={ageBottomSheetOpen}
           setIsOpen={setAgeBottomSheetOpen}
-          age={petAge}
-          updatePetAge={updatePetAge}
+          petBirth={petBirth}
+          updatePetBirth={updatePetBirth}
+          birthError={birthError}
           petId={petInfo.petId}
+          onUpdateSuccess={() => {
+            setPetBirth("");
+            setBirthError(null);
+          }}
         />
       </section>
     </div>

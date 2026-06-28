@@ -26,10 +26,10 @@ const Step3 = () => {
 
   const { watch } = useFormContext<ReviewFormData>();
 
-  const goodReviewIds = watch("goodReviewIds");
-  const badReviewIds = watch("badReviewIds");
+  const goodReviewIds = watch("goodReviewIds") ?? [];
+  const badReviewIds = watch("badReviewIds") ?? [];
 
-  const isFromValid = goodReviewIds.length > 0 || badReviewIds.length > 0;
+  const isFormValid = goodReviewIds.length > 0 || badReviewIds.length > 0;
 
   const handleGoReviewList = () => {
     router.push(PATH.REVIEW.ROOT);
@@ -49,11 +49,13 @@ const Step3 = () => {
   return (
     <>
       {/* 상단 리뷰 영역 */}
-      <HeaderNav
-        centerContent="리뷰작성(3/4)"
-        leftIcon={<IcDeleteBlack style={{ width: 24, height: 24 }} onClick={handleModalOpen} />}
-      />
-      <div className={styles.backgroundColor}>
+      <div className={styles.headerContainer}>
+        <HeaderNav
+          centerContent="리뷰작성(3/4)"
+          leftIcon={<IcDeleteBlack style={{ width: 24, height: 24 }} onClick={handleModalOpen} />}
+        />
+      </div>
+      <div className={styles.backgroundColor} style={{ marginTop: "6.4rem" }}>
         {/* 타이틀 */}
         <section className={styles.TopLayout}>
           <LazyImage src={feedbackImg} alt="review-feedback img" className={styles.img} width="8rem" height="6rem" />
@@ -88,7 +90,7 @@ const Step3 = () => {
         {/* 하단 버튼 영역 */}
         <section className={styles.btnLayout}>
           <Button label="이전으로" size="large" variant="solidNeutral" onClick={handlePrev} />
-          <Button label="다음으로" size="large" variant="solidPrimary" onClick={handleNext} disabled={!isFromValid} />
+          <Button label="다음으로" size="large" variant="solidPrimary" onClick={handleNext} disabled={!isFormValid} />
         </section>
       </div>
 

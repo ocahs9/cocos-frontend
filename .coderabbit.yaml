@@ -1,0 +1,16 @@
+language: "ko-KR"  # 리뷰 코멘트를 한국어로
+reviews:
+  profile: "chill"           # chill | assertive
+  request_changes_workflow: false
+  high_level_summary: true
+  poem: false                # 시 작성 끄기
+  review_status: true
+  collapse_walkthrough: false
+  auto_review:
+    enabled: true
+    drafts: false            # draft PR은 리뷰 안 함
+  path_filters:
+    - "!**/*.lock"
+    - "!dist/**"
+chat:
+  auto_reply: true
